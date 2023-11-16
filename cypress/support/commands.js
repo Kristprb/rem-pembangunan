@@ -23,3 +23,18 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
+Cypress.Commands.add("login", (username, password) => {
+  // Your login logic here
+  // For example:
+  cy.intercept("POST", "/api/auth/login").as("loginRequest");
+  cy.visit("https://rem-fe.stg.happyhomes.id/");
+
+  // Fill in the username and password
+  cy.get('input[name="email"]').type(username);
+  cy.get('input[name="password"]').type(password);
+
+  // Click the login button
+  cy.get('button[type="submit"]').click();
+  cy.wait("@loginRequest");
+  cy.contains("Selamat Datang");
+});
