@@ -37,4 +37,5 @@ Cypress.Commands.add("login", (username, password) => {
   cy.get('button[type="submit"]').click();
   cy.wait("@loginRequest");
   cy.contains("Selamat Datang");
+  cy.wait(2000);
 });
