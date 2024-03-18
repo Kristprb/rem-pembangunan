@@ -9,13 +9,13 @@ const navigateToMaster = () => {
 
 describe("Stages Test", () => {
   beforeEach(() => {
-    cy.login("kristiane@realtegic.co.id", "testing12");
+    cy.login("kristianepurba@happyhomes.id", "testing12");
     cy.url().should("include", "/projects");
     cy.contains("Daftar Project");
     navigateToMaster();
   });
 
-  it("creates a new stage and handles duplicate stage creation", () => {
+  it("creating a new stage and handling duplicate stage creation", () => {
     cy.intercept("GET", "/project/*/construction/master/stage*").as(
       "getStages"
     );
@@ -32,7 +32,7 @@ describe("Stages Test", () => {
     cy.get("body").click(0, 0);
   });
 
-  it("edits and handles duplicate stage update", () => {
+  it("editing and handling duplicate stage updates", () => {
     cy.intercept("GET", "/project/*/construction/master/stage*").as(
       "getStages"
     );
@@ -48,7 +48,25 @@ describe("Stages Test", () => {
     cy.get("body").click(0, 0);
     cy.contains("Batalkan").click();
   });
-  it("deletes a stage", () => {
+
+  it("Search a stage", () => {
+    cy.intercept("GET", "/project/*/construction/master/stage*").as(
+      "getStages"
+    );
+    cy.intercept("PATCH", "/project/*/construction/master/stage").as(
+      "patchStage"
+    );
+
+    cy.wait("@getStages");
+    searchStage("3");
+    searchStage("100");
+
+    cy.contains("Pencarian tidak ada");
+    cy.get("body").click(0, 0);
+    cy.contains("Batalkan").click();
+  });
+
+  it("delete a stage", () => {
     cy.intercept("DELETE", "/project/*/construction/master/stage/*").as(
       "deleteStage"
     );
@@ -65,7 +83,7 @@ function createStage(name, date) {
   cy.get('[placeholder="DD/MM/YYYY"]').type(date);
   cy.contains("Simpan").click();
   cy.wait("@postStage").then((interception) => {
-    cy.wait(1000);
+    cy.wait(2000);
     if (interception.response.statusCode === 200) {
       cy.contains(`Tahap ${name} berhasil ditambah`);
       cy.get("body").click(0, 0);
@@ -79,7 +97,7 @@ function editStage(rowIndex, newName) {
   cy.get('input[name="name"]').clear().type(newName);
   cy.contains("Simpan").click();
   cy.wait("@patchStage").then((interception) => {
-    cy.wait(1000);
+    cy.wait(2000);
     if (interception.response.statusCode === 200) {
       cy.contains("Tahap berhasil diupdate");
       cy.get("body").click(0, 0);
@@ -103,6 +121,17 @@ function selectStageAction(rowIndex, action) {
     .eq(rowIndex)
     .find(".MuiIconButton-sizeMedium")
     .click();
+  cy.wait(1500);
+  cy.contains(action).click();
+}
+
+function searchStage(rowIndex, action) {
+  cy.get("table.MuiTable-root")
+    .find("tr.MuiTableRow-root")
+    .eq(rowIndex)
+    .find(".MuiIconButton-sizeMedium")
+    .click();
+  cy.get('[data-testid="CloseIcon"]').click();
   cy.wait(1500);
   cy.contains(action).click();
 }

@@ -2,7 +2,7 @@ import "../../../support/commands";
 
 describe("Cluster Test", () => {
   beforeEach(() => {
-    cy.login("kristiane@realtegic.co.id", "testing12"); // Menggunakan fungsi login yang Anda buat
+    cy.login("kristianepurba@happyhomes.id", "testing12"); // Menggunakan fungsi login yang Anda buat
   });
 
   it("cretate cluster", () => {
